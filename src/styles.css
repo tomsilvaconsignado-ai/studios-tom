@@ -1,0 +1,119 @@
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --font-display: "Bangers", system-ui, sans-serif;
+  --font-sans: "Space Grotesk", system-ui, sans-serif;
+  --radius-sm: calc(var(--radius) - 2px);
+  --radius-md: var(--radius);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 2px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-highlight: var(--highlight);
+  --color-panel: var(--panel);
+  --color-canvas: var(--canvas);
+  --color-success: var(--success);
+}
+
+:root {
+  --radius: 0.25rem;
+  --background: oklch(0.96 0.03 85);
+  --foreground: oklch(0.17 0.01 60);
+  --card: oklch(0.99 0.02 95);
+  --card-foreground: oklch(0.17 0.01 60);
+  --popover: oklch(0.99 0.02 95);
+  --popover-foreground: oklch(0.17 0.01 60);
+  --primary: oklch(0.58 0.22 27);
+  --primary-foreground: oklch(0.99 0.01 95);
+  --secondary: oklch(0.94 0.04 85);
+  --secondary-foreground: oklch(0.17 0.01 60);
+  --muted: oklch(0.92 0.03 85);
+  --muted-foreground: oklch(0.45 0.02 60);
+  --accent: oklch(0.88 0.17 95);
+  --accent-foreground: oklch(0.17 0.01 60);
+  --highlight: oklch(0.88 0.17 95);
+  --panel: oklch(0.97 0 0);
+  --canvas: oklch(0.91 0.03 80);
+  --success: oklch(0.55 0.13 150);
+  --destructive: oklch(0.55 0.22 27);
+  --destructive-foreground: oklch(0.99 0 0);
+  --border: oklch(0.17 0.01 60);
+  --input: oklch(0.17 0.01 60);
+  --ring: oklch(0.58 0.22 27);
+  --balloon-paper: oklch(1 0 0);
+  --balloon-ink: oklch(0.17 0 0);
+  --balloon-shadow: oklch(0.17 0 0 / 0.4);
+}
+
+.balloon-layer { container-type: inline-size; }
+.balloon-shape { filter: drop-shadow(var(--balloon-shadow-size) var(--balloon-shadow-size) 0 var(--balloon-shadow)); }
+.balloon-text { line-height: 1.15; letter-spacing: 0; }
+.balloon-text-outline { -webkit-text-stroke: 0.4px var(--balloon-paper); paint-order: stroke fill; }
+
+@layer base {
+  * { border-color: var(--color-border); }
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    background-image: radial-gradient(oklch(0.17 0.01 60 / 0.08) 1px, transparent 1px);
+    background-size: 16px 16px;
+  }
+  h1, h2, h3, .font-display { font-family: var(--font-display); letter-spacing: 0.02em; font-style: italic; }
+}
+
+@utility comic-card {
+  background-color: var(--card);
+  border: 2px solid var(--foreground);
+  box-shadow: 5px 5px 0 var(--foreground);
+}
+@utility comic-shadow {
+  box-shadow: 4px 4px 0 var(--foreground);
+}
+@utility comic-btn {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  padding: 0.5rem 1.25rem;
+  border: 2px solid var(--foreground);
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+  font-family: var(--font-display); font-style: italic; font-size: 1.15rem; letter-spacing: 0.03em;
+  box-shadow: 4px 4px 0 var(--foreground);
+  transition: transform .1s, box-shadow .1s;
+  &:hover { transform: translate(-1px,-1px); box-shadow: 5px 5px 0 var(--foreground); }
+  &:active { transform: translate(3px,3px); box-shadow: 1px 1px 0 var(--foreground); }
+  &:disabled { opacity: .5; pointer-events: none; }
+}
+@utility comic-btn-light {
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem;
+  padding: 0.4rem 0.9rem; font-size: 0.85rem; font-weight: 600;
+  border: 1.5px solid var(--foreground);
+  background-color: var(--secondary); color: var(--foreground);
+  &:hover { background-color: var(--accent); }
+}
+@utility comic-input {
+  width: 100%; padding: 0.55rem 0.75rem;
+  border: 1.5px solid var(--foreground); background-color: var(--card);
+  font-size: 0.9rem; outline: none;
+  &:focus { box-shadow: 3px 3px 0 var(--primary); }
+}

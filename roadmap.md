@@ -1,0 +1,14 @@
+# Roadmap
+- [x] Criar imagens com IA (quadros e capa)
+- [x] Histórico de versões
+- [x] Desfazer / refazer
+- [x] Exportar para impressão
+- [x] Remover selo automático e verificar ausência de branding visual do Lovable em todas as páginas, preservando o projeto.
+- [x] Adicionar camadas de imagem editáveis aos quadros (mover, redimensionar, girar, opacidade, ordem, trocar, excluir e salvar)
+- [x] Evoluir a capa para editor visual multicamadas (imagens, textos, bloqueio, recorte, guias, modelos, duplicação, tela cheia e persistência)
+- [x] Adicionar “Meu Estilo” com referências, análise por IA, biblioteca, seleção combinada, renomear, duplicar e excluir
+- [x] Adicionar balões personalizáveis como camadas, caudas precisas, modelos reutilizáveis e validar salvamento/impressão.
+- [x] Confirmar páginas novas vazias e livre inserção de elementos.
+- [x] Enviar dimensões proporcionais ao painel (limites da IA: múltiplos de 16 e até 3:1); validar arraste, zoom, centralizar, restaurar e persistência.
+- [x] Continuidade visual e narrativa entre painéis (memória da cena, referência do painel anterior, níveis, verificação e alertas)
+- [ ] Confirmar dimensões da imagem final gerada: teste real encerrado por recusa do filtro de segurança; requer uma nova geração iniciada pelo usuário.

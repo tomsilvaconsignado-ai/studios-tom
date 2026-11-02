@@ -1,23 +1,29 @@
-# Studios Tom
+# Welcome to your Lovable project
 
-Projeto mínimo em React + Vite para rodar a interface do editor de quadrinhos.
+This project was built with [Lovable](https://lovable.dev).
 
-## Como rodar
+## Build with Lovable
 
-1. Instale as dependências:
-   npm install
+Open your project in the [Lovable editor](https://lovable.dev) and keep building.
 
-2. Inicie o app:
-   npm run dev
+- **Ship faster**: describe what you want to build and Lovable handles the code.
+- **Stay in sync**: connect the project to GitHub and every change made in Lovable is committed straight to your repository.
+- **Full ownership**: this code is yours. Push to your repository and your changes sync back into Lovable, ready for your next prompt.
 
-3. Acesse:
-   http://localhost:5173
+## Development
 
-## Build de produção
+Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
 
-npm run build
+```sh
+git clone <this-repository-url>
+cd <repository-name>
+npm i
+npm run dev
+```
 
-## Observações
+## Built with
 
-- Este app atual é uma mock interface funcional para demonstrar o editor de quadrinhos.
-- A integração real com Supabase + Gemini ainda precisa ser conectada aos endpoints do projeto.
+- TanStack Start
+- TypeScript
+- React
+- Tailwind CSS

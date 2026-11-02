@@ -1,0 +1,50 @@
+import { ArrowDown, ArrowUp, Bold, Copy, Italic, MessageCircle, Pencil, Plus, Save, Trash2 } from "lucide-react";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { FORMATOS_BALAO, novoBalao } from "@/lib/baloes";
+import { uid, type CamadaImagem, type EstiloBalao, type ModeloBalao } from "@/lib/db";
+
+export function EditorBaloes({ camadas, selecionada, modelos, onSelecionar, onAdicionar, onAlterar, onMover, onExcluir, onModelos }: {
+  camadas: CamadaImagem[]; selecionada: string | null; modelos: ModeloBalao[];
+  onSelecionar: (id: string) => void; onAdicionar: (c: CamadaImagem) => void;
+  onAlterar: (id: string, patch: Partial<CamadaImagem>) => void; onMover: (id: string, direcao: -1 | 1) => void;
+  onExcluir: (id: string) => void; onModelos: (modelos: ModeloBalao[]) => void;
+}) {
+  const [nomeModelo, setNomeModelo] = useState("");
+  const ativa = camadas.find((c) => c.id === selecionada && c.balao);
+  const b = ativa?.balao;
+  const editar = (patch: Partial<EstiloBalao>) => { if (ativa && b) onAlterar(ativa.id, { balao: { ...b, ...patch } }); };
+  const adicionar = (camada: CamadaImagem) => { onAdicionar(camada); onSelecionar(camada.id); };
+  const numero = (nome: string, valor: number, mudar: (n: number) => void, min: number, max: number) => <label className="block text-xs font-semibold">{nome}<input aria-label={nome} type="number" step="0.5" min={min} max={max} className="comic-input !py-1" value={valor} onChange={(e) => { const n = Number(e.target.value); if (Number.isFinite(n)) mudar(Math.min(max, Math.max(min, n))); }} /></label>;
+  const cor = (nome: string, valor: string, mudar: (v: string) => void, fallback: string) => <label className="flex items-center justify-between gap-2 text-xs font-semibold">{nome}<input type="color" aria-label={nome} value={valor.startsWith("#") ? valor : fallback} className="h-8 w-10 cursor-pointer border bg-card" onChange={(e) => mudar(e.target.value)} /></label>;
+  return <section className="space-y-3 border-t-2 pt-3" aria-label="Balões personalizados">
+    <div className="flex items-center justify-between gap-2"><h4 className="flex items-center gap-2 font-bold"><MessageCircle className="size-4" />Balões personalizados</h4><Button variant="outline" size="sm" title="Adicionar balão" aria-label="Adicionar balão" onClick={() => adicionar(novoBalao())}><Plus /></Button></div>
+    <div className="grid grid-cols-2 gap-1">{FORMATOS_BALAO.map((f) => <Button key={f.valor} variant="outline" size="sm" className="justify-start" onClick={() => adicionar(novoBalao(f.valor))}><MessageCircle />{f.nome}</Button>)}</div>
+    {camadas.some((c) => c.balao) && <div className="space-y-1">{[...camadas].reverse().filter((c) => c.balao).map((c) => <Button key={c.id} variant="outline" className={`w-full justify-start ${c.id === selecionada ? "bg-highlight" : ""}`} onClick={() => onSelecionar(c.id)}><MessageCircle /><span className="truncate">{c.nome}</span></Button>)}</div>}
+    {ativa && b && <div className="space-y-3">
+      <label className="block text-xs font-semibold">Texto do balão<textarea aria-label="Texto do balão" className="comic-input" rows={3} value={b.texto} onChange={(e) => onAlterar(ativa.id, { nome: e.target.value.slice(0, 24) || "Balão", balao: { ...b, texto: e.target.value } })} /></label>
+      <label className="block text-xs font-semibold">Formato<select aria-label="Formato do balão" className="comic-input" value={b.formato} onChange={(e) => editar({ formato: e.target.value as EstiloBalao["formato"] })}>{FORMATOS_BALAO.map((f) => <option key={f.valor} value={f.valor}>{f.nome}</option>)}</select></label>
+      <div className="grid grid-cols-2 gap-2">
+        {numero("Balão X (%)", ativa.x, (x) => onAlterar(ativa.id, { x }), 0, 100)}{numero("Balão Y (%)", ativa.y, (y) => onAlterar(ativa.id, { y }), 0, 100)}
+        {numero("Largura do balão (%)", ativa.largura, (largura) => onAlterar(ativa.id, { largura }), 8, 180)}{numero("Altura do balão (%)", b.altura, (altura) => editar({ altura }), 8, 180)}
+        {numero("Rotação do balão (°)", ativa.rotacao, (rotacao) => onAlterar(ativa.id, { rotacao }), -360, 360)}{numero("Espessura da borda", b.espessura, (espessura) => editar({ espessura }), 0, 12)}
+      </div>
+      <label className="block text-xs font-semibold">Borda<select className="comic-input" value={b.borda} onChange={(e) => editar({ borda: e.target.value as EstiloBalao["borda"] })}><option value="solida">Sólida</option><option value="tracejada">Tracejada</option><option value="pontilhada">Pontilhada</option></select></label>
+      <label className="block text-xs font-semibold">Fonte<select aria-label="Fonte do balão" className="comic-input" value={b.fonte} onChange={(e) => editar({ fonte: e.target.value })}>{["Space Grotesk", "Bangers", "Arial", "Georgia", "Comic Sans MS", "monospace"].map((f) => <option key={f}>{f}</option>)}</select></label>
+      <div className="flex items-end gap-2">{numero("Tamanho da fonte", b.tamanhoFonte, (tamanhoFonte) => editar({ tamanhoFonte }), 6, 100)}<Button variant="outline" size="icon" aria-label="Negrito" title="Negrito" aria-pressed={b.negrito} className={b.negrito ? "bg-highlight" : ""} onClick={() => editar({ negrito: !b.negrito })}><Bold /></Button><Button variant="outline" size="icon" aria-label="Itálico" title="Itálico" aria-pressed={b.italico} className={b.italico ? "bg-highlight" : ""} onClick={() => editar({ italico: !b.italico })}><Italic /></Button></div>
+      <label className="block text-xs font-semibold">Alinhamento<select className="comic-input" value={b.alinhamento} onChange={(e) => editar({ alinhamento: e.target.value as EstiloBalao["alinhamento"] })}><option value="left">Esquerda</option><option value="center">Centro</option><option value="right">Direita</option></select></label>
+      <div className="space-y-2">{cor("Cor do balão", b.fundo, (fundo) => editar({ fundo }), "#ffffff")}{cor("Cor do texto", b.corTexto, (corTexto) => editar({ corTexto }), "#191919")}{cor("Cor da borda", b.corBorda, (corBorda) => editar({ corBorda }), "#191919")}</div>
+      <label className="block text-xs font-semibold">Opacidade do balão: {ativa.opacidade}%<input aria-label="Opacidade do balão" type="range" min="0" max="100" className="w-full accent-primary" value={ativa.opacidade} onChange={(e) => onAlterar(ativa.id, { opacidade: Number(e.target.value) })} /></label>
+      <label className="block text-xs font-semibold">Sombra: {b.sombra}<input aria-label="Sombra do balão" type="range" min="0" max="12" className="w-full accent-primary" value={b.sombra} onChange={(e) => editar({ sombra: Number(e.target.value) })} /></label>
+      <label className="block text-xs font-semibold">Efeito do texto<select className="comic-input" value={b.efeito} onChange={(e) => editar({ efeito: e.target.value as EstiloBalao["efeito"] })}><option value="nenhum">Nenhum</option><option value="contorno">Contorno</option></select></label>
+      <div className="space-y-2 border-t pt-2"><label className="flex items-center gap-2 text-sm font-semibold"><input type="checkbox" checked={b.cauda} onChange={(e) => editar({ cauda: e.target.checked })} />Cauda do balão</label>{b.cauda && <div className="grid grid-cols-2 gap-2">
+        {numero("Ponta da cauda X", b.caudaX, (caudaX) => editar({ caudaX }), -400, 500)}{numero("Ponta da cauda Y", b.caudaY, (caudaY) => editar({ caudaY }), -400, 500)}
+        {numero("Base da cauda X", b.baseX, (baseX) => editar({ baseX }), 5, 95)}{numero("Base da cauda Y", b.baseY, (baseY) => editar({ baseY }), 5, 95)}
+        {numero("Largura da cauda", b.larguraCauda, (larguraCauda) => editar({ larguraCauda }), 2, 50)}
+      </div>}</div>
+      <div className="flex flex-wrap gap-2">{([{ icon: ArrowUp, nome: "Balão para frente", fn: () => onMover(ativa.id, 1), disabled: camadas.at(-1)?.id === ativa.id }, { icon: ArrowDown, nome: "Balão para trás", fn: () => onMover(ativa.id, -1), disabled: camadas[0]?.id === ativa.id }, { icon: Copy, nome: "Duplicar balão", fn: () => adicionar({ ...structuredClone(ativa), id: uid(), nome: `${ativa.nome} cópia`, x: Math.min(100, ativa.x + 4), y: Math.min(100, ativa.y + 4) }), disabled: false }, { icon: Trash2, nome: "Excluir balão", fn: () => onExcluir(ativa.id), disabled: false }]).map(({ icon: Icon, nome, fn, disabled }) => <Button key={nome} title={nome} aria-label={nome} variant="outline" size="icon" disabled={disabled} onClick={fn}><Icon /></Button>)}</div>
+      <div className="flex gap-2"><input aria-label="Nome do modelo de balão" placeholder="Nome do modelo" className="comic-input min-w-0" value={nomeModelo} onChange={(e) => setNomeModelo(e.target.value)} /><Button variant="outline" size="icon" aria-label="Salvar modelo de balão" title="Salvar modelo de balão" disabled={!nomeModelo.trim()} onClick={() => { onModelos([...modelos, { id: uid(), nome: nomeModelo.trim(), camada: structuredClone(ativa) }]); setNomeModelo(""); }}><Save /></Button></div>
+    </div>}
+    {modelos.length > 0 && <div className="space-y-2 border-t pt-2"><h5 className="text-xs font-bold">Modelos de balão</h5>{modelos.map((m) => <div key={m.id} className="flex gap-1"><Button variant="outline" className="min-w-0 flex-1 justify-start" title={`Inserir ${m.nome}`} onClick={() => adicionar({ ...structuredClone(m.camada), id: uid() })}><Plus /><span className="truncate">{m.nome}</span></Button><Button variant="ghost" size="icon" title="Renomear modelo" aria-label={`Renomear ${m.nome}`} onClick={() => { const nome = prompt("Nome do modelo", m.nome)?.trim(); if (nome) onModelos(modelos.map((item) => item.id === m.id ? { ...item, nome } : item)); }}><Pencil /></Button><Button variant="ghost" size="icon" title="Excluir modelo" aria-label={`Excluir modelo ${m.nome}`} onClick={() => onModelos(modelos.filter((item) => item.id !== m.id))}><Trash2 /></Button></div>)}</div>}
+  </section>;
+}
